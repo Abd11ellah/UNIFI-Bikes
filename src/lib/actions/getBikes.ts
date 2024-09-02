@@ -21,6 +21,22 @@ export const fetchBikeThefts = async (page: number) => {
   }
 };
 
+export const fetchBikeTheftsCount = async () => {
+  try {
+    const response = await axios.get(API_BASE_URL+'/count', {
+      params: {
+        location: 'Munich',
+        distance: 100,
+        stolenness: 'proximity',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching bikes theft data:', error);
+    throw error;
+  }
+};
+
 export const fetchFilteredBikeThefts = async (
   page: number,
   titleFilter: string,

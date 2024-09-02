@@ -71,7 +71,7 @@ const Bike = ({title , description , dateOfTheft , dateOfReported , location , i
               <div className='w-[50%]'>
 
                 <p className="mb-2 font-medium text-lg">Date of when the case was reported : </p>
-                <p className="bg-white px-2 py-1 rounded w-fit text-black">{formattedDate2.toString()}</p>
+                <p className="bg-green-700 px-2 py-1 rounded w-fit">{formattedDate2.toString()}</p>
 
               </div>
 
@@ -85,7 +85,7 @@ const Bike = ({title , description , dateOfTheft , dateOfReported , location , i
               <div className='w-[100%]'>
 
                 <p className="mb-2 font-medium text-lg">Description : </p>
-                <p className="bg-green-700 px-2 py-1 rounded w-fit">{description}</p>
+                <p className="bg-white px-2 py-1 rounded w-fit text-black">{description}</p>
 
               </div>
             </div>
