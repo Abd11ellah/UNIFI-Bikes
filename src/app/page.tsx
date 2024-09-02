@@ -6,6 +6,8 @@ import Bike from "@/components/Bike";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
 import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { VscSearch } from "react-icons/vsc";
+import Response from "@/components/Response";
+import { AnimatePresence } from "framer-motion";
 
 interface BikeTheft {
 
@@ -28,12 +30,15 @@ export default function Home() {
   const [titleFilter, setTitleFilter] = useState<string>('');
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
-  const [startFilter, setStartFilter] = useState<boolean>(false);
+  const [startRespone, setStartRespone] = useState<boolean>(false);
+  const [submitSearch, setSubmitSearch] = useState<boolean>(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
       
       scrollTo(0, 0);
-
+      setStartRespone(true)
+      document.body.style.overflow = 'hidden';
     async function name() {
 
       if(titleFilter||startDate||endDate){
@@ -77,51 +82,31 @@ export default function Home() {
           }));
           setBikeThefts(bikeList);
         }
+        document.body.style.overflow = 'unset';
+        setStartRespone(false)
     }
     name()
-  }, [whichPage])
+  }, [whichPage ,  submitSearch])
     
-
-      
-      async function names() {
-        console.log("names")
-        console.log("titleFilter" , titleFilter)
-        console.log("startDate" , startDate)
-        console.log("endDate" , endDate)
-
-        setStartDate((new Date(startDate).getTime()/1000).toString()) 
-        setEndDate((new Date(endDate).getTime()/1000).toString()) 
-
-        
-
-          const respo = await fetchBikeTheftsCount(titleFilter, startDate, endDate);
-
-          setNumberOfBikes(respo.proximity)
-    
-          const res = await fetchFilteredBikeThefts(whichPage, titleFilter, startDate, endDate);
-          
-          const detailedBikes = await Promise.all(res.map((bike: any) => fetchBikeDetails(bike.id)));
-    
-          const bikeList = detailedBikes.map((bike: any) => ({
-            id: bike.id,
-            title: bike.title?bike.title:'Unavailable',
-            description: bike.description?bike.description:'Unavailable',
-            dateOfTheft: bike.date_stolen?bike.date_stolen:'Unavailable',
-            dateOfReported: bike.stolen_record.created_at?bike.stolen_record.created_at:'Unavailable',
-            location: bike.stolen_location?bike.stolen_location:'Unavailable',
-            image: bike.thumb,
-          }));
-          setBikeThefts(bikeList);
-        
-
-      }    
 
 
   return (
-    <main>
+    // className="bg-[url('https://www.transparenttextures.com/patterns/pw-pattern.png')]"
+    <main >
+
+      {/* Loading */}
+
+        <AnimatePresence 
+          mode='sync'
+          initial={false}
+          onExitComplete={() => null}
+        >
+            {startRespone &&<Response error="" />}
+        </AnimatePresence>
       
       {/* header */}
-        <div className="mt-20 w-full text-center">
+
+        <div className="pt-20 w-full text-center">
           <p className="text-5xl">Search for near Munich stolen bikes</p>
           <p className="mt-5 text-3xl">Total number of bike stolen : {numberOfBikes}</p>
         </div>
@@ -169,12 +154,13 @@ export default function Home() {
 
         </div>
         <div className="flex justify-center items-center mt-10 w-full">
-          <button className="flex bg-white px-4 py-2.5 rounded-lg font-medium text-2xl" onClick={() => {names() , setWhichPage(1)}}>Filter <span className="my-auto ml-2 font-bold"><VscSearch/></span></button>
+          <button className="flex bg-white px-4 py-2.5 rounded-lg font-medium text-2xl" onClick={() => {setSubmitSearch(!submitSearch),setWhichPage(1)}}>Search <span className="my-auto ml-2 font-bold"><VscSearch/></span></button>
         </div>
 
         </div>
 
       {/* cases  */}
+
         <div className="mx-20 mt-20">
           {bikeThefts?.map((bikeTheft:BikeTheft) =>{
             
@@ -199,7 +185,7 @@ export default function Home() {
 
       {/* paginate  */}
       
-      <div className="clear-start flex justify-center my-20">
+      <div className="clear-start flex justify-center py-20">
           
           <button  className={`bg-black mx-3 px-4 py-2 rounded text-white ${whichPage===1&&'hidden'}`} onClick={() => setWhichPage(1)}>
                 <MdKeyboardDoubleArrowLeft/>
