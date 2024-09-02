@@ -1,6 +1,6 @@
 'use client'
 
-import { fetchBikeThefts } from "@/lib/actions/getBikes";
+import { fetchBikeDetails, fetchBikeThefts } from "@/lib/actions/getBikes";
 import { useEffect, useState } from "react";
 import Bike from "@/components/Bike";
 
@@ -27,12 +27,17 @@ export default function Home() {
     async function name() {
 
       const res = await fetchBikeThefts(1);
-      const bikeList = res.map((bike: any) => ({
+      
+      const detailedBikes = await Promise.all(res.map((bike: any) => fetchBikeDetails(bike.id)));
+
+      console.log("detailedBikes",detailedBikes)
+
+      const bikeList = detailedBikes.map((bike: any) => ({
         id: bike.id,
         title: bike.title?bike.title:'Unavailable',
         description: bike.description?bike.description:'Unavailable',
         dateOfTheft: bike.date_stolen?bike.date_stolen:'Unavailable',
-        dateOfReported: bike.year?bike.year:'Unavailable',
+        dateOfReported: bike.stolen_record.created_at?bike.stolen_record.created_at:'Unavailable',
         location: bike.stolen_location?bike.stolen_location:'Unavailable',
         image: bike.thumb,
       }));
@@ -40,11 +45,6 @@ export default function Home() {
     }
     name()
   }, [])
-  
-
-    useEffect(() => {
-     console.log(bikeThefts)
-    }, [bikeThefts])
     
 
   return (

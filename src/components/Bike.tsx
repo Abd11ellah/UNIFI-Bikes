@@ -4,9 +4,23 @@ import Image from 'next/image'
 
 const Bike = ({title , description , dateOfTheft , dateOfReported , location , image} : {title:string,description:string,dateOfTheft:string,dateOfReported:string,location:string,image:string,}) => {
     
-    const unixTimestamp = Number(dateOfTheft);
-    const date = new Date(unixTimestamp * 1000); 
+    const unixTimestamp1 = Number(dateOfTheft);
+    const date1 = new Date(unixTimestamp1 * 1000); 
+    const formattedDate1 = date1.toLocaleDateString('en-US', {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
 
+      const unixTimestamp2 = Number(dateOfReported);
+      const date2 = new Date(unixTimestamp2 * 1000); 
+      const formattedDate2 = date2.toLocaleDateString('en-US', {
+          weekday: 'short',
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
   return (
     <div>
         
@@ -38,40 +52,40 @@ const Bike = ({title , description , dateOfTheft , dateOfReported , location , i
                 }
             </div>
 
-            <div className="flex flex-wrap justify-around items-center px-3 w-[calc(100%-250px)] text-white">
+            <div className="flex flex-wrap justify-around items-center px-5 w-[calc(100%-250px)] text-white">
 
-              <div>
+              <div className='w-[50%]'>
 
                 <p className="mb-2 font-medium text-lg">Title : </p>
-                <p className="bg-blue-700 px-2 py-1 rounded">{title}</p>
+                <p className="bg-blue-700 px-2 py-1 rounded w-fit">{title}</p>
 
               </div>
 
-              <div>
-
-                <p className="mb-2 font-medium text-lg">Description : </p>
-                <p className="bg-green-700 px-2 py-1 rounded">{description}</p>
-
-              </div>
-
-              <div>
+              <div className='w-[50%]'>
 
                 <p className="mb-2 font-medium text-lg">Date of the theft : </p>
-                <p className="bg-yellow-500 px-2 py-1 rounded">{date.toString()}</p>
+                <p className="bg-yellow-500 px-2 py-1 rounded w-fit">{formattedDate1.toString()}</p>
 
               </div>
 
-              <div>
+              <div className='w-[50%]'>
 
                 <p className="mb-2 font-medium text-lg">Date of when the case was reported : </p>
-                <p className="bg-white px-2 py-1 rounded text-black">{dateOfReported}</p>
+                <p className="bg-white px-2 py-1 rounded w-fit text-black">{formattedDate2.toString()}</p>
 
               </div>
 
-              <div>
+              <div className='w-[50%]'>
 
                 <p className="mb-2 font-medium text-lg">Location of the theft : </p>
-                <p className="bg-red-700 px-2 py-1 rounded">{location}</p>
+                <p className="bg-red-700 px-2 py-1 rounded w-fit">{location}</p>
+
+              </div>
+
+              <div className='w-[100%]'>
+
+                <p className="mb-2 font-medium text-lg">Description : </p>
+                <p className="bg-green-700 px-2 py-1 rounded w-fit">{description}</p>
 
               </div>
             </div>
