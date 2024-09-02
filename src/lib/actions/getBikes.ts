@@ -21,13 +21,20 @@ export const fetchBikeThefts = async (page: number) => {
   }
 };
 
-export const fetchBikeTheftsCount = async () => {
+export const fetchBikeTheftsCount = async (
+  titleFilter: string,
+  startDate: string,
+  endDate: string
+) => {
   try {
     const response = await axios.get(API_BASE_URL+'/count', {
       params: {
         location: 'Munich',
         distance: 100,
         stolenness: 'proximity',
+        query: titleFilter,
+        occurred_before: startDate ? new Date(startDate).getTime() / 1000 : undefined,
+        occurred_after: endDate ? new Date(endDate).getTime() / 1000 : undefined,
       },
     });
     return response.data;

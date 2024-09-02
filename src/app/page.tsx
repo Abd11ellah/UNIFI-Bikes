@@ -1,12 +1,11 @@
 'use client'
 
-import { fetchBikeDetails, fetchBikeThefts, fetchBikeTheftsCount } from "@/lib/actions/getBikes";
+import { fetchBikeDetails, fetchBikeThefts, fetchBikeTheftsCount, fetchFilteredBikeThefts } from "@/lib/actions/getBikes";
 import { useEffect, useState } from "react";
 import Bike from "@/components/Bike";
-import { IoIosArrowBack } from "react-icons/io";
-import { IoIosArrowForward } from "react-icons/io";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
 import { MdKeyboardDoubleArrowRight } from "react-icons/md";
+import { VscSearch } from "react-icons/vsc";
 
 interface BikeTheft {
 
@@ -26,7 +25,10 @@ export default function Home() {
   const [bikeThefts, setBikeThefts] = useState<BikeTheft[]>([]);
   const [numberOfBikes, setNumberOfBikes] = useState<number>(0);
   const [whichPage, setWhichPage] = useState<number>(1);
-
+  const [titleFilter, setTitleFilter] = useState<string>('');
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+  const [startFilter, setStartFilter] = useState<boolean>(false);
 
   useEffect(() => {
       
@@ -34,28 +36,86 @@ export default function Home() {
 
     async function name() {
 
-      const respo = await fetchBikeTheftsCount();
+      if(titleFilter||startDate||endDate){
 
-      setNumberOfBikes(respo.proximity)
+        const respo = await fetchBikeTheftsCount(titleFilter, startDate, endDate);
 
-      const res = await fetchBikeThefts(whichPage);
-      
-      const detailedBikes = await Promise.all(res.map((bike: any) => fetchBikeDetails(bike.id)));
+        setNumberOfBikes(respo.proximity)
+  
+        const res = await fetchFilteredBikeThefts(whichPage, titleFilter, startDate, endDate);
+        
+        const detailedBikes = await Promise.all(res.map((bike: any) => fetchBikeDetails(bike.id)));
+  
+        const bikeList = detailedBikes.map((bike: any) => ({
+          id: bike.id,
+          title: bike.title?bike.title:'Unavailable',
+          description: bike.description?bike.description:'Unavailable',
+          dateOfTheft: bike.date_stolen?bike.date_stolen:'Unavailable',
+          dateOfReported: bike.stolen_record.created_at?bike.stolen_record.created_at:'Unavailable',
+          location: bike.stolen_location?bike.stolen_location:'Unavailable',
+          image: bike.thumb,
+        }));
+        setBikeThefts(bikeList);
 
-      const bikeList = detailedBikes.map((bike: any) => ({
-        id: bike.id,
-        title: bike.title?bike.title:'Unavailable',
-        description: bike.description?bike.description:'Unavailable',
-        dateOfTheft: bike.date_stolen?bike.date_stolen:'Unavailable',
-        dateOfReported: bike.stolen_record.created_at?bike.stolen_record.created_at:'Unavailable',
-        location: bike.stolen_location?bike.stolen_location:'Unavailable',
-        image: bike.thumb,
-      }));
-      setBikeThefts(bikeList);
+      }else{
+          const respo = await fetchBikeTheftsCount("","","");
+
+          setNumberOfBikes(respo.proximity)
+
+          const res = await fetchBikeThefts(whichPage);
+          
+          const detailedBikes = await Promise.all(res.map((bike: any) => fetchBikeDetails(bike.id)));
+
+          const bikeList = detailedBikes.map((bike: any) => ({
+            id: bike.id,
+            title: bike.title?bike.title:'Unavailable',
+            description: bike.description?bike.description:'Unavailable',
+            dateOfTheft: bike.date_stolen?bike.date_stolen:'Unavailable',
+            dateOfReported: bike.stolen_record.created_at?bike.stolen_record.created_at:'Unavailable',
+            location: bike.stolen_location?bike.stolen_location:'Unavailable',
+            image: bike.thumb,
+          }));
+          setBikeThefts(bikeList);
+        }
     }
     name()
   }, [whichPage])
     
+
+      
+      async function names() {
+        console.log("names")
+        console.log("titleFilter" , titleFilter)
+        console.log("startDate" , startDate)
+        console.log("endDate" , endDate)
+
+        setStartDate((new Date(startDate).getTime()/1000).toString()) 
+        setEndDate((new Date(endDate).getTime()/1000).toString()) 
+
+        
+
+          const respo = await fetchBikeTheftsCount(titleFilter, startDate, endDate);
+
+          setNumberOfBikes(respo.proximity)
+    
+          const res = await fetchFilteredBikeThefts(whichPage, titleFilter, startDate, endDate);
+          
+          const detailedBikes = await Promise.all(res.map((bike: any) => fetchBikeDetails(bike.id)));
+    
+          const bikeList = detailedBikes.map((bike: any) => ({
+            id: bike.id,
+            title: bike.title?bike.title:'Unavailable',
+            description: bike.description?bike.description:'Unavailable',
+            dateOfTheft: bike.date_stolen?bike.date_stolen:'Unavailable',
+            dateOfReported: bike.stolen_record.created_at?bike.stolen_record.created_at:'Unavailable',
+            location: bike.stolen_location?bike.stolen_location:'Unavailable',
+            image: bike.thumb,
+          }));
+          setBikeThefts(bikeList);
+        
+
+      }    
+
 
   return (
     <main>
@@ -64,6 +124,54 @@ export default function Home() {
         <div className="mt-20 w-full text-center">
           <p className="text-5xl">Search for near Munich stolen bikes</p>
           <p className="mt-5 text-3xl">Total number of bike stolen : {numberOfBikes}</p>
+        </div>
+
+      {/* filtering */}
+
+        <div className="justify-around items-center bg-gradient-to-r from-gray-500 to-gray-900 mx-20 mt-20 py-3 rounded-lg" >
+
+        <p className="w-full text-[27px] text-center text-white">Filter By</p>
+
+        <div className="py-5">
+          <p className="mx-[10%] mb-2 text-white text-xl">Title :</p>
+          <input
+            type="text"
+            value={titleFilter}
+            onChange={(e) => setTitleFilter(e.target.value)}
+            placeholder="Search by title"
+            className="mx-[10%] mr-4 px-[2.5%] py-1 focus:border-none rounded-lg w-[80%] h-10"
+          />
+        </div>
+
+        <div className="flex justify-around px-[10%] py-5">
+          <p className="flex flex-col justify-center items-center text-white text-xl">Coming Soon:</p>
+          <div>
+            <p className="mb-2 text-white">Start-Date :</p>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="mr-4 px-2 py-1 border rounded-lg h-10"
+              disabled
+            />
+          </div>
+
+          <div>
+            <p className="mb-2 text-white">End-Date :</p>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="px-2 py-1 border rounded-lg h-10"
+              disabled
+            />
+          </div>
+
+        </div>
+        <div className="flex justify-center items-center mt-10 w-full">
+          <button className="flex bg-white px-4 py-2.5 rounded-lg font-medium text-2xl" onClick={() => {names() , setWhichPage(1)}}>Filter <span className="my-auto ml-2 font-bold"><VscSearch/></span></button>
+        </div>
+
         </div>
 
       {/* cases  */}
