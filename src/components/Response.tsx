@@ -51,8 +51,9 @@ const Response = ({error} : {error?:string}) => {
             
             >
             
-            <p className='flex justify-center my-auto font-semibold text-5xl text-white max-md:text-4xl break-words'> <span className='mr-2'><AiOutlineCloseCircle/></span>Error</p>
+            <p className='flex justify-center my-auto px-2 font-semibold text-5xl text-white max-md:text-4xl break-words'>Error : {error}</p>
 
+            <p className='mt-8 text-center text-white text-xl'>Something went wrong. Please refresh the page and try again</p>
 
             </motion.div>
 

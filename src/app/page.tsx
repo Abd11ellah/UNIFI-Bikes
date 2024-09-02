@@ -43,47 +43,65 @@ export default function Home() {
 
       if(titleFilter||startDate||endDate){
 
-        const respo = await fetchBikeTheftsCount(titleFilter, startDate, endDate);
+        try {
 
-        setNumberOfBikes(respo.proximity)
-  
-        const res = await fetchFilteredBikeThefts(whichPage, titleFilter, startDate, endDate);
+              const respo = await fetchBikeTheftsCount(titleFilter, startDate, endDate);
+
+              setNumberOfBikes(respo.proximity)
         
-        const detailedBikes = await Promise.all(res.map((bike: any) => fetchBikeDetails(bike.id)));
-  
-        const bikeList = detailedBikes.map((bike: any) => ({
-          id: bike.id,
-          title: bike.title?bike.title:'Unavailable',
-          description: bike.description?bike.description:'Unavailable',
-          dateOfTheft: bike.date_stolen?bike.date_stolen:'Unavailable',
-          dateOfReported: bike.stolen_record.created_at?bike.stolen_record.created_at:'Unavailable',
-          location: bike.stolen_location?bike.stolen_location:'Unavailable',
-          image: bike.thumb,
-        }));
-        setBikeThefts(bikeList);
+              const res = await fetchFilteredBikeThefts(whichPage, titleFilter, startDate, endDate);
+              
+              const detailedBikes = await Promise.all(res.map((bike: any) => fetchBikeDetails(bike.id)));
+        
+              const bikeList = detailedBikes.map((bike: any) => ({
+                id: bike.id,
+                title: bike.title?bike.title:'Unavailable',
+                description: bike.description?bike.description:'Unavailable',
+                dateOfTheft: bike.date_stolen?bike.date_stolen:'Unavailable',
+                dateOfReported: bike.stolen_record.created_at?bike.stolen_record.created_at:'Unavailable',
+                location: bike.stolen_location?bike.stolen_location:'Unavailable',
+                image: bike.thumb,
+              }));
+              setBikeThefts(bikeList);
+              setStartRespone(false)
+              document.body.style.overflow = 'unset';
+              
+          } catch (err:any) {
 
+            setError(err.message);
+
+          }
       }else{
+        
+        try {
+
           const respo = await fetchBikeTheftsCount("","","");
 
-          setNumberOfBikes(respo.proximity)
+              setNumberOfBikes(respo.proximity)
 
-          const res = await fetchBikeThefts(whichPage);
-          
-          const detailedBikes = await Promise.all(res.map((bike: any) => fetchBikeDetails(bike.id)));
+              const res = await fetchBikeThefts(whichPage);
+              
+              const detailedBikes = await Promise.all(res.map((bike: any) => fetchBikeDetails(bike.id)));
 
-          const bikeList = detailedBikes.map((bike: any) => ({
-            id: bike.id,
-            title: bike.title?bike.title:'Unavailable',
-            description: bike.description?bike.description:'Unavailable',
-            dateOfTheft: bike.date_stolen?bike.date_stolen:'Unavailable',
-            dateOfReported: bike.stolen_record.created_at?bike.stolen_record.created_at:'Unavailable',
-            location: bike.stolen_location?bike.stolen_location:'Unavailable',
-            image: bike.thumb,
-          }));
-          setBikeThefts(bikeList);
+              const bikeList = detailedBikes.map((bike: any) => ({
+                id: bike.id,
+                title: bike.title?bike.title:'Unavailable',
+                description: bike.description?bike.description:'Unavailable',
+                dateOfTheft: bike.date_stolen?bike.date_stolen:'Unavailable',
+                dateOfReported: bike.stolen_record.created_at?bike.stolen_record.created_at:'Unavailable',
+                location: bike.stolen_location?bike.stolen_location:'Unavailable',
+                image: bike.thumb,
+              }));
+              setBikeThefts(bikeList);
+              setStartRespone(false)
+              document.body.style.overflow = 'unset';
+
+          } catch (err:any) {
+
+              setError(err.message);
+
+          }
         }
-        document.body.style.overflow = 'unset';
-        setStartRespone(false)
     }
     name()
   }, [whichPage ,  submitSearch])
@@ -101,7 +119,8 @@ export default function Home() {
           initial={false}
           onExitComplete={() => null}
         >
-            {startRespone &&<Response error="" />}
+            {startRespone && error &&<Response error={error} />}
+            {startRespone && !error &&<Response />}
         </AnimatePresence>
       
       {/* header */}
