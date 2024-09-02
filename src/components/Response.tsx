@@ -1,7 +1,6 @@
 'use clinet'
-import React, { useEffect } from 'react'
+import React from 'react'
 import {motion} from 'framer-motion'
-import { AiOutlineCloseCircle } from 'react-icons/ai'
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const Response = ({error} : {error?:string}) => {
@@ -53,7 +52,7 @@ const Response = ({error} : {error?:string}) => {
             
             <p className='flex justify-center my-auto px-2 font-semibold text-5xl text-white max-md:text-4xl break-words'>Error : {error}</p>
 
-            <p className='mt-8 text-center text-white text-xl'>Something went wrong. Please refresh the page and try again</p>
+            <p className='mx-2 mt-8 text-center text-white text-xl'>Something went wrong. Please refresh the page and try again</p>
 
             </motion.div>
 
