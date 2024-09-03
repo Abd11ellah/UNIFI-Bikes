@@ -9,7 +9,7 @@ const Response = ({error} : {error?:string}) => {
   return (
     <>
         
-    <motion.div className='before:top-0 before:left-0 before:absolute flex justify-center items-center before:bg-[#000000e1] before:w-full before:h-full'
+    <motion.div className='top-0 left-0 z-[51] fixed bg-[#000000e1] opacity-[0] w-full h-full' 
         initial={{opacity:0}}
         animate={{opacity:1}}
         exit={{opacity:0}}
@@ -17,7 +17,7 @@ const Response = ({error} : {error?:string}) => {
     />
         {!error?
 
-            <motion.div className='z-10 absolute bg-green-600 mx-[25%] max-md:mx-[5%] max-lg:mx-[10%] my-[15%] max-lg:my-[25%] py-16 rounded-3xl w-[50%] max-md:w-[90%] max-lg:w-[80%] text-center break-words'
+            <motion.div className='z-[52] absolute bg-green-600 mx-[25%] max-md:mx-[5%] max-lg:mx-[10%] my-[15%] max-lg:my-[25%] py-16 rounded-3xl w-[50%] max-md:w-[90%] max-lg:w-[80%] text-center break-words'
             initial={{ opacity:0 , y:'-100vh' }}
             animate={{opacity:1, y:'0vh'}}
             exit={{ opacity:0 , y:'100vh' }}
@@ -42,7 +42,7 @@ const Response = ({error} : {error?:string}) => {
             </motion.div>
 
         :
-            <motion.div className='z-10 absolute bg-red-600 mx-[25%] max-md:mx-[5%] max-lg:mx-[10%] my-[15%] max-lg:my-[25%] py-16 rounded-3xl w-[50%] max-md:w-[90%] max-lg:w-[80%] text-center break-words'
+            <motion.div className='z-[52] absolute bg-red-600 mx-[25%] max-md:mx-[5%] max-lg:mx-[10%] my-[15%] max-lg:my-[25%] py-16 rounded-3xl w-[50%] max-md:w-[90%] max-lg:w-[80%] text-center break-words'
             initial={{ opacity:0 , y:'-100vh' }}
             animate={{opacity:1, y:'0vh'}}
             exit={{ opacity:0 , y:'100vh' }}
