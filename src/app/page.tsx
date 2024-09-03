@@ -111,7 +111,6 @@ export default function Home() {
 
 
   return (
-    // className="bg-[url('https://www.transparenttextures.com/patterns/pw-pattern.png')]"
     <main >
 
       {/* Loading */}
@@ -230,11 +229,14 @@ export default function Home() {
       </div>
 
       </>:<>
-      
+        
+        {/*  if it is empty */}
+        
         <motion.div className='bg-yellow-400 mx-[25%] max-md:mx-[5%] max-lg:mx-[10%] my-[8%] max-lg:my-[25%] py-16 rounded-3xl w-[50%] max-md:w-[90%] max-lg:w-[80%] text-center break-words'
-            initial={{ opacity:0 , x:'-100vw' }}
-            animate={{opacity:1, x:'0vh'}}
+            initial={{ opacity:0  }}
+            whileInView={{opacity:1}}
             transition={{duration:0.5}}
+            viewport={{ once: true }}
             
             >
             
